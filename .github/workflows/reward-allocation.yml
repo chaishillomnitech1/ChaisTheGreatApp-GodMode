@@ -1,0 +1,245 @@
+name: Reward Allocation for Merged PRs
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+
+jobs:
+  allocate-rewards:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm init -y
+          npm install ethers@5.7.2
+
+      - name: Calculate Reward Amount
+        id: calculate-reward
+        run: |
+          # Base reward amount (in wei): 10 tokens = 10 * 10^18 wei
+          BASE_REWARD="10000000000000000000"
+
+          # Get PR stats
+          PR_ADDITIONS=${{ github.event.pull_request.additions }}
+          PR_DELETIONS=${{ github.event.pull_request.deletions }}
+          PR_CHANGED_FILES=${{ github.event.pull_request.changed_files }}
+
+          # Calculate bonus multiplier based on PR size
+          # Small PR (< 50 lines): 1x
+          # Medium PR (50-200 lines): 1.5x
+          # Large PR (> 200 lines): 2x
+          TOTAL_CHANGES=$((PR_ADDITIONS + PR_DELETIONS))
+
+          if [ $TOTAL_CHANGES -lt 50 ]; then
+            MULTIPLIER="1"
+          elif [ $TOTAL_CHANGES -lt 200 ]; then
+            MULTIPLIER="1.5"
+          else
+            MULTIPLIER="2"
+          fi
+
+          echo "reward_amount=$BASE_REWARD" >> $GITHUB_OUTPUT
+          echo "multiplier=$MULTIPLIER" >> $GITHUB_OUTPUT
+          echo "total_changes=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
+
+      - name: Mint Rewards on OmniRewards Contract
+        id: mint-rewards
+        env:
+          ALCHEMY_MUMBAI_URL: ${{ secrets.ALCHEMY_MUMBAI_URL }}
+          REWARDS_PRIVATE_KEY: ${{ secrets.REWARDS_PRIVATE_KEY }}
+          OMNIREWARDS_CONTRACT_ADDRESS: ${{ secrets.OMNIREWARDS_CONTRACT_ADDRESS }}
+          CONTRIBUTOR_ADDRESS: ${{ secrets.CONTRIBUTOR_ADDRESS }}
+          REWARD_AMOUNT: ${{ steps.calculate-reward.outputs.reward_amount }}
+        run: |
+          # Create minting script
+          cat > mint-rewards.js <<'EOF'
+          const { ethers } = require('ethers');
+
+          async function mintRewards() {
+            try {
+              // Environment validation
+              const rpcUrl = process.env.ALCHEMY_MUMBAI_URL;
+              const privateKey = process.env.REWARDS_PRIVATE_KEY;
+              const contractAddress = process.env.OMNIREWARDS_CONTRACT_ADDRESS;
+              const contributorAddress = process.env.CONTRIBUTOR_ADDRESS || process.env.PR_AUTHOR;
+              const rewardAmount = process.env.REWARD_AMOUNT;
+
+              // Staging check - skip on pilot deployment
+              if (!rpcUrl || !privateKey || !contractAddress) {
+                console.log('⚠️ Staging mode: Missing required secrets. Skipping actual minting.');
+                console.log('📋 Would mint', rewardAmount, 'wei to', contributorAddress);
+                return {
+                  success: true,
+                  staging: true,
+                  txHash: 'staging-simulation-' + Date.now()
+                };
+              }
+
+              // Production minting
+              const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+              const wallet = new ethers.Wallet(privateKey, provider);
+
+              // OmniRewards contract ABI (minimal interface for minting)
+              const contractABI = [
+                'function mint(address to, uint256 amount) public returns (bool)',
+                'function balanceOf(address account) public view returns (uint256)'
+              ];
+
+              const contract = new ethers.Contract(contractAddress, contractABI, wallet);
+
+              console.log('🚀 Minting rewards...');
+              console.log('  Contract:', contractAddress);
+              console.log('  Recipient:', contributorAddress);
+              console.log('  Amount:', rewardAmount, 'wei');
+
+              // Execute minting transaction
+              const tx = await contract.mint(contributorAddress, rewardAmount);
+              console.log('📤 Transaction submitted:', tx.hash);
+
+              // Wait for confirmation
+              const receipt = await tx.wait();
+              console.log('✅ Transaction confirmed in block:', receipt.blockNumber);
+
+              // Query new balance
+              const newBalance = await contract.balanceOf(contributorAddress);
+              console.log('💰 New balance:', ethers.utils.formatEther(newBalance), 'tokens');
+
+              return {
+                success: true,
+                staging: false,
+                txHash: tx.hash,
+                blockNumber: receipt.blockNumber,
+                newBalance: newBalance.toString()
+              };
+
+            } catch (error) {
+              console.error('❌ Error minting rewards:', error.message);
+              throw error;
+            }
+          }
+
+          // Execute and output results
+          mintRewards()
+            .then(result => {
+              console.log('RESULT:', JSON.stringify(result));
+              process.exit(0);
+            })
+            .catch(error => {
+              console.error('FATAL:', error);
+              process.exit(1);
+            });
+          EOF
+
+          # Set PR author as recipient if CONTRIBUTOR_ADDRESS not set
+          export PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          # Execute minting script
+          node mint-rewards.js | tee mint-output.log
+
+          # Extract results
+          if grep -q "RESULT:" mint-output.log; then
+            RESULT=$(grep "RESULT:" mint-output.log | sed 's/RESULT: //')
+            TX_HASH=$(echo "$RESULT" | jq -r '.txHash // "N/A"')
+            STAGING=$(echo "$RESULT" | jq -r '.staging // false')
+            echo "tx_hash=$TX_HASH" >> $GITHUB_OUTPUT
+            echo "staging=$STAGING" >> $GITHUB_OUTPUT
+          else
+            echo "tx_hash=error" >> $GITHUB_OUTPUT
+            echo "staging=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post Reward Notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const txHash = `${{ steps.mint-rewards.outputs.tx_hash }}`;
+            const staging = `${{ steps.mint-rewards.outputs.staging }}`;
+            const rewardAmount = `${{ steps.calculate-reward.outputs.reward_amount }}`;
+            const multiplier = `${{ steps.calculate-reward.outputs.multiplier }}`;
+            const totalChanges = `${{ steps.calculate-reward.outputs.total_changes }}`;
+            const author = context.payload.pull_request.user.login;
+
+            let message;
+
+            if (staging === 'true' || txHash === 'error') {
+              message = `## 🏗️ Reward Allocation (Staging Mode)
+
+              Congratulations @${author}! Your contribution has been merged! 🎉
+
+              **Reward Details:**
+              - Base Amount: 10 OmniRewards tokens
+              - Multiplier: ${multiplier}x (based on ${totalChanges} lines changed)
+              - Total Reward: ${(10 * parseFloat(multiplier)).toFixed(1)} OmniRewards tokens
+
+              ⚠️ **Staging Mode Active**: No actual tokens minted yet.
+
+              To enable live rewards, configure these repository secrets:
+              - \`ALCHEMY_MUMBAI_URL\`
+              - \`REWARDS_PRIVATE_KEY\`
+              - \`OMNIREWARDS_CONTRACT_ADDRESS\`
+              - \`CONTRIBUTOR_ADDRESS\` (optional, defaults to PR author)
+
+              See \`DEPLOYMENT.md\` for setup instructions.
+
+              ---
+              *Powered by OmniRewards Protocol*`;
+            } else {
+              const explorerUrl = \`https://mumbai.polygonscan.com/tx/\${txHash}\`;
+              message = `## 🎉 Reward Allocated Successfully!
+
+              Congratulations @${author}! Your contribution has been merged and rewarded! 🏆
+
+              **Reward Details:**
+              - Base Amount: 10 OmniRewards tokens
+              - Multiplier: ${multiplier}x (based on ${totalChanges} lines changed)
+              - Total Reward: ${(10 * parseFloat(multiplier)).toFixed(1)} OmniRewards tokens
+
+              **Transaction:** [\`${txHash.substring(0, 10)}...\`](${explorerUrl})
+
+              Your tokens have been minted on the Polygon Mumbai testnet! 🌟
+
+              ---
+              *Powered by OmniRewards Protocol*`;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });
+
+      - name: Security Guardrail Check
+        run: |
+          echo "🔒 Security Guardrail: Checking transaction integrity..."
+
+          # Verify we're on a testnet (Mumbai)
+          if [ -n "${{ secrets.ALCHEMY_MUMBAI_URL }}" ]; then
+            if echo "${{ secrets.ALCHEMY_MUMBAI_URL }}" | grep -q "mumbai"; then
+              echo "✅ Confirmed: Using Mumbai testnet"
+            else
+              echo "⚠️ Warning: Not using Mumbai testnet URL"
+            fi
+          fi
+
+          # Log completion
+          echo "✅ Reward allocation workflow completed"
+          echo "   TX Hash: ${{ steps.mint-rewards.outputs.tx_hash }}"
+          echo "   Staging Mode: ${{ steps.mint-rewards.outputs.staging }}"

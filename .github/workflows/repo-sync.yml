@@ -1,0 +1,235 @@
+name: Repo-Sync Action
+
+on:
+  # Manual trigger for on-demand syncing
+  workflow_dispatch:
+    inputs:
+      sync_direction:
+        description: 'Sync direction'
+        required: true
+        type: choice
+        options:
+          - pull
+          - push
+        default: 'pull'
+      files_to_sync:
+        description: 'Files to sync (comma-separated, e.g., .github/workflows/,README.md)'
+        required: false
+        default: '.github/workflows/'
+
+  # Scheduled pull sync (daily at 2 AM UTC)
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Trigger on push to main for push sync
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+      - 'DEPLOYMENT.md'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Determine Sync Direction
+        id: sync-config
+        run: |
+          # Determine sync direction based on trigger
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            DIRECTION="${{ github.event.inputs.sync_direction }}"
+            FILES="${{ github.event.inputs.files_to_sync }}"
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            DIRECTION="pull"
+            FILES=".github/workflows/"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            DIRECTION="push"
+            FILES=".github/workflows/,DEPLOYMENT.md"
+          else
+            DIRECTION="pull"
+            FILES=".github/workflows/"
+          fi
+
+          echo "direction=$DIRECTION" >> $GITHUB_OUTPUT
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "📋 Sync Direction: $DIRECTION"
+          echo "📋 Files to sync: $FILES"
+
+      - name: Checkout Current Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Git Config
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Pull Sync from omnitech-templates
+        if: steps.sync-config.outputs.direction == 'pull'
+        env:
+          TEMPLATE_REPO: ${{ secrets.TEMPLATE_REPO_URL || 'chaishillomnitech1/omnitech-templates' }}
+          FILES_TO_SYNC: ${{ steps.sync-config.outputs.files }}
+        run: |
+          echo "🔄 Pulling updates from omnitech-templates..."
+
+          # Clone template repository
+          TEMP_DIR=$(mktemp -d)
+          cd $TEMP_DIR
+
+          # Check if we have a PAT for private repo access
+          if [ -n "${{ secrets.SYNC_PAT }}" ]; then
+            git clone https://${{ secrets.SYNC_PAT }}@github.com/${TEMPLATE_REPO}.git template-repo
+          else
+            # Try public access
+            git clone https://github.com/${TEMPLATE_REPO}.git template-repo 2>/dev/null || {
+              echo "⚠️ Could not access template repository. Ensure TEMPLATE_REPO_URL and SYNC_PAT secrets are configured."
+              echo "📋 Sync skipped - repository not accessible"
+              exit 0
+            }
+          fi
+
+          cd template-repo
+
+          # Parse files to sync
+          IFS=',' read -ra FILE_ARRAY <<< "$FILES_TO_SYNC"
+
+          # Copy files to current repo
+          cd $GITHUB_WORKSPACE
+          CHANGES_MADE=false
+
+          for FILE_PATH in "${FILE_ARRAY[@]}"; do
+            # Trim whitespace
+            FILE_PATH=$(echo "$FILE_PATH" | xargs)
+
+            if [ -d "$TEMP_DIR/template-repo/$FILE_PATH" ]; then
+              # It's a directory
+              echo "📁 Syncing directory: $FILE_PATH"
+              mkdir -p "$FILE_PATH"
+              cp -r "$TEMP_DIR/template-repo/$FILE_PATH"* "$FILE_PATH" 2>/dev/null || echo "  No files to sync in $FILE_PATH"
+              CHANGES_MADE=true
+            elif [ -f "$TEMP_DIR/template-repo/$FILE_PATH" ]; then
+              # It's a file
+              echo "📄 Syncing file: $FILE_PATH"
+              mkdir -p $(dirname "$FILE_PATH")
+              cp "$TEMP_DIR/template-repo/$FILE_PATH" "$FILE_PATH"
+              CHANGES_MADE=true
+            else
+              echo "⚠️ Path not found in template: $FILE_PATH"
+            fi
+          done
+
+          # Cleanup
+          rm -rf $TEMP_DIR
+
+          # Check for changes
+          if git diff --quiet; then
+            echo "✅ No changes to sync"
+            echo "changes_made=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Changes detected, will commit"
+            echo "changes_made=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and Push Changes (Pull Sync)
+        if: steps.sync-config.outputs.direction == 'pull'
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+          else
+            git add .
+            git commit -m "chore: sync from omnitech-templates [automated]"
+            git push
+            echo "✅ Changes pushed successfully"
+          fi
+
+      - name: Push Sync to omnitech-templates
+        if: steps.sync-config.outputs.direction == 'push'
+        env:
+          TEMPLATE_REPO: ${{ secrets.TEMPLATE_REPO_URL || 'chaishillomnitech1/omnitech-templates' }}
+          FILES_TO_SYNC: ${{ steps.sync-config.outputs.files }}
+        run: |
+          echo "🔄 Pushing updates to omnitech-templates..."
+
+          # Check if we have required credentials
+          if [ -z "${{ secrets.SYNC_PAT }}" ]; then
+            echo "⚠️ SYNC_PAT secret not configured. Cannot push to template repository."
+            echo "📋 Push sync requires SYNC_PAT with repo write access."
+            exit 0
+          fi
+
+          # Clone template repository
+          TEMP_DIR=$(mktemp -d)
+          cd $TEMP_DIR
+          git clone https://${{ secrets.SYNC_PAT }}@github.com/${TEMPLATE_REPO}.git template-repo
+          cd template-repo
+
+          # Create a new branch for changes
+          BRANCH_NAME="sync-from-${{ github.repository_owner }}-$(date +%s)"
+          git checkout -b $BRANCH_NAME
+
+          # Parse files to sync
+          IFS=',' read -ra FILE_ARRAY <<< "$FILES_TO_SYNC"
+
+          # Copy files from current repo
+          CHANGES_MADE=false
+
+          for FILE_PATH in "${FILE_ARRAY[@]}"; do
+            # Trim whitespace
+            FILE_PATH=$(echo "$FILE_PATH" | xargs)
+
+            if [ -d "$GITHUB_WORKSPACE/$FILE_PATH" ]; then
+              # It's a directory
+              echo "📁 Pushing directory: $FILE_PATH"
+              mkdir -p "$FILE_PATH"
+              cp -r "$GITHUB_WORKSPACE/$FILE_PATH"* "$FILE_PATH" 2>/dev/null || echo "  No files to push in $FILE_PATH"
+              CHANGES_MADE=true
+            elif [ -f "$GITHUB_WORKSPACE/$FILE_PATH" ]; then
+              # It's a file
+              echo "📄 Pushing file: $FILE_PATH"
+              mkdir -p $(dirname "$FILE_PATH")
+              cp "$GITHUB_WORKSPACE/$FILE_PATH" "$FILE_PATH"
+              CHANGES_MADE=true
+            else
+              echo "⚠️ Path not found in source: $FILE_PATH"
+            fi
+          done
+
+          # Commit and push if changes exist
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "✅ No changes to push"
+          else
+            git add .
+            git commit -m "chore: sync from ${{ github.repository }} [automated]"
+            git push origin $BRANCH_NAME
+            echo "✅ Changes pushed to branch: $BRANCH_NAME"
+            echo "📋 Create a PR in the template repository to merge these changes"
+          fi
+
+          # Cleanup
+          cd $GITHUB_WORKSPACE
+          rm -rf $TEMP_DIR
+
+      - name: Summary
+        run: |
+          echo "======================================"
+          echo "🎯 Repo-Sync Action Completed"
+          echo "======================================"
+          echo "Direction: ${{ steps.sync-config.outputs.direction }}"
+          echo "Files: ${{ steps.sync-config.outputs.files }}"
+          echo "Trigger: ${{ github.event_name }}"
+          echo "======================================"
+          echo ""
+          echo "ℹ️  Configuration:"
+          echo "   - For pull sync: Set TEMPLATE_REPO_URL and optionally SYNC_PAT"
+          echo "   - For push sync: Set SYNC_PAT with write access"
+          echo "   - Default template: chaishillomnitech1/omnitech-templates"
+          echo ""
+          echo "✅ Workflow completed successfully"
