@@ -6,9 +6,8 @@
 /* Root Variables - Cosmic Color Palette */
 :root {
     --cosmic-purple: #6a0dad;
-    --cosmic-blue: #00ced1;
-    --cosmic-gold: #ffd700;
     --cosmic-teal: #00ced1;
+    --cosmic-gold: #ffd700;
     --cosmic-violet: #9400d3;
     --sacred-green: #00ff88;
     --divine-white: #ffffff;
@@ -77,8 +76,8 @@ body {
     text-shadow: 
         0 0 10px var(--cosmic-purple),
         0 0 20px var(--cosmic-purple),
-        0 0 30px var(--cosmic-blue),
-        0 0 40px var(--cosmic-blue);
+        0 0 30px var(--cosmic-teal),
+        0 0 40px var(--cosmic-teal);
     animation: textGlow 3s ease-in-out infinite;
 }
 
@@ -117,7 +116,7 @@ body {
 .middle-ring {
     width: 200px;
     height: 200px;
-    border-color: var(--cosmic-blue);
+    border-color: var(--cosmic-teal);
     opacity: 0.8;
     animation-duration: 10s;
     animation-direction: reverse;
@@ -134,7 +133,7 @@ body {
     position: relative;
     width: 80px;
     height: 80px;
-    background: radial-gradient(circle, var(--cosmic-purple) 0%, var(--cosmic-blue) 50%, transparent 100%);
+    background: radial-gradient(circle, var(--cosmic-purple) 0%, var(--cosmic-teal) 50%, transparent 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -325,7 +324,7 @@ body {
     padding: 2rem;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
-    border: 2px solid var(--cosmic-blue);
+    border: 2px solid var(--cosmic-teal);
 }
 
 .ar-controls {
@@ -575,14 +574,14 @@ body {
         text-shadow: 
             0 0 10px var(--cosmic-purple),
             0 0 20px var(--cosmic-purple),
-            0 0 30px var(--cosmic-blue);
+            0 0 30px var(--cosmic-teal);
     }
     50% {
         text-shadow: 
             0 0 20px var(--cosmic-purple),
             0 0 40px var(--cosmic-purple),
-            0 0 60px var(--cosmic-blue),
-            0 0 80px var(--cosmic-blue);
+            0 0 60px var(--cosmic-teal),
+            0 0 80px var(--cosmic-teal);
     }
 }
 

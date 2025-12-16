@@ -5,6 +5,14 @@
  */
 
 // ===================================
+// Configuration Constants
+// ===================================
+const CONFIG = {
+    MAX_LOG_ENTRIES: 10,
+    ANIMATION_DURATION: 300 // milliseconds
+};
+
+// ===================================
 // Global State Management
 // ===================================
 const PortalState = {
@@ -316,8 +324,8 @@ function logInteraction(message) {
     li.textContent = logEntry;
     logList.insertBefore(li, logList.firstChild);
     
-    // Keep only last 10 entries
-    while (logList.children.length > 10) {
+    // Keep only last MAX_LOG_ENTRIES entries
+    while (logList.children.length > CONFIG.MAX_LOG_ENTRIES) {
         logList.removeChild(logList.lastChild);
     }
 }
@@ -529,7 +537,7 @@ function setupEventHandlers() {
             card.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 card.style.transform = '';
-            }, 300);
+            }, CONFIG.ANIMATION_DURATION);
         });
     });
 }
