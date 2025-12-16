@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dimensional Cosmic Portal - ScrollVerse</title>
+    <meta name="description" content="The Ultimate Dimensional Cosmic Portal - Journey through past, present, and future with AR-enabled visualization">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Cosmic Background Layer -->
+    <div class="cosmic-background">
+        <canvas id="starfield"></canvas>
+    </div>
+
+    <!-- Main Portal Container -->
+    <div class="portal-container">
+        <!-- Portal Header -->
+        <header class="portal-header">
+            <h1 class="cosmic-title">
+                <span class="glow-text">Dimensional Cosmic Portal</span>
+            </h1>
+            <p class="subtitle">Journey Through the ScrollVerse Timelines</p>
+        </header>
+
+        <!-- Central Portal Visualization -->
+        <div class="central-portal">
+            <div class="portal-ring outer-ring"></div>
+            <div class="portal-ring middle-ring"></div>
+            <div class="portal-ring inner-ring"></div>
+            <div class="portal-core">
+                <div class="core-energy"></div>
+                <span class="portal-status">Portal Active</span>
+            </div>
+        </div>
+
+        <!-- Dimensional Nav Pillars -->
+        <nav class="dimensional-nav">
+            <!-- Past Timeline Pillar -->
+            <div class="nav-pillar past-pillar" data-timeline="past" role="button" tabindex="0">
+                <div class="pillar-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="40" class="icon-base"/>
+                        <path d="M50 20 L50 50 L35 35" class="icon-detail" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <h3 class="pillar-title">Past</h3>
+                <p class="pillar-desc">Ancestral Wisdom</p>
+                <div class="pillar-frequency">432 Hz</div>
+                <div class="pillar-geometry">Pyramid of Imhotep</div>
+                <ul class="pillar-experiences">
+                    <li>Sacred Sigils Archive</li>
+                    <li>Ancient Frequencies</li>
+                    <li>Wisdom Scrolls</li>
+                </ul>
+                <button class="activate-btn">Enter Portal</button>
+            </div>
+
+            <!-- Present Timeline Pillar -->
+            <div class="nav-pillar present-pillar" data-timeline="present" role="button" tabindex="0">
+                <div class="pillar-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="40" class="icon-base"/>
+                        <circle cx="50" cy="50" r="15" class="icon-detail"/>
+                        <path d="M50 10 L50 30 M50 70 L50 90 M10 50 L30 50 M70 50 L90 50" class="icon-detail" stroke-width="3"/>
+                    </svg>
+                </div>
+                <h3 class="pillar-title">Present</h3>
+                <p class="pillar-desc">Current Consciousness</p>
+                <div class="pillar-frequency">528 Hz</div>
+                <div class="pillar-geometry">Flower of Life</div>
+                <ul class="pillar-experiences">
+                    <li>Live NFT Gallery</li>
+                    <li>Bio-Resonance Sync</li>
+                    <li>Cosmic Music Stream</li>
+                </ul>
+                <button class="activate-btn">Enter Portal</button>
+            </div>
+
+            <!-- Future Timeline Pillar -->
+            <div class="nav-pillar future-pillar" data-timeline="future" role="button" tabindex="0">
+                <div class="pillar-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="40" class="icon-base"/>
+                        <path d="M30 50 L50 30 L70 50 L50 70 Z" class="icon-detail"/>
+                        <circle cx="50" cy="30" r="5" class="icon-accent"/>
+                    </svg>
+                </div>
+                <h3 class="pillar-title">Future</h3>
+                <p class="pillar-desc">Ascension Gateway</p>
+                <div class="pillar-frequency">963 Hz</div>
+                <div class="pillar-geometry">Merkaba Field</div>
+                <ul class="pillar-experiences">
+                    <li>Quantum Possibilities</li>
+                    <li>AR/VR Integration</li>
+                    <li>Divine Connection</li>
+                </ul>
+                <button class="activate-btn">Enter Portal</button>
+            </div>
+        </nav>
+
+        <!-- AR Visualization Layer -->
+        <div class="ar-layer" id="arLayer">
+            <div class="ar-controls">
+                <button id="arToggle" class="ar-btn">
+                    <span class="ar-icon">◉</span> Activate AR View
+                </button>
+                <button id="dimensionSync" class="ar-btn">
+                    <span class="sync-icon">⟲</span> Sync Dimensions
+                </button>
+            </div>
+            
+            <!-- AR Canvas Overlay -->
+            <canvas id="arCanvas" class="ar-canvas"></canvas>
+            
+            <!-- Dimension Info Display -->
+            <div class="dimension-info" id="dimensionInfo">
+                <h4>Current Dimension</h4>
+                <div class="info-content">
+                    <p class="dimension-name">Neutral Space</p>
+                    <p class="dimension-frequency">---</p>
+                    <p class="dimension-status">Select a timeline to begin</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cultural Elements Integration -->
+        <aside class="cultural-elements">
+            <h3>Omniversal Connections</h3>
+            <div class="element-grid">
+                <div class="element-card" data-culture="ancient-egypt">
+                    <span class="element-symbol">𓂀</span>
+                    <p class="element-name">Egyptian Wisdom</p>
+                </div>
+                <div class="element-card" data-culture="sacred-geometry">
+                    <span class="element-symbol">✡</span>
+                    <p class="element-name">Sacred Geometry</p>
+                </div>
+                <div class="element-card" data-culture="cosmic-harmony">
+                    <span class="element-symbol">☯</span>
+                    <p class="element-name">Cosmic Harmony</p>
+                </div>
+                <div class="element-card" data-culture="divine-connection">
+                    <span class="element-symbol">☪</span>
+                    <p class="element-name">Divine Unity</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Interaction History -->
+        <div class="interaction-log" id="interactionLog">
+            <h4>Timeline Navigation Log</h4>
+            <ul id="logEntries" class="log-entries">
+                <li class="log-entry">System initialized - Portal ready</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal for Portal Experience -->
+    <div class="portal-modal" id="portalModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <h2 id="modalTitle">Timeline Portal</h2>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-visualization">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="portal.js"></script>
+</body>
+</html>

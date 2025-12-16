@@ -1,0 +1,701 @@
+/* ===================================
+   Dimensional Cosmic Portal Styles
+   ScrollVerse Integration
+   =================================== */
+
+/* Root Variables - Cosmic Color Palette */
+:root {
+    --cosmic-purple: #6a0dad;
+    --cosmic-blue: #00ced1;
+    --cosmic-gold: #ffd700;
+    --cosmic-teal: #00ced1;
+    --cosmic-violet: #9400d3;
+    --sacred-green: #00ff88;
+    --divine-white: #ffffff;
+    --space-black: #0a0a0f;
+    --portal-glow: rgba(106, 13, 173, 0.6);
+    --future-glow: rgba(148, 0, 211, 0.8);
+    --present-glow: rgba(0, 255, 136, 0.8);
+    --past-glow: rgba(255, 215, 0, 0.8);
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: var(--space-black);
+    color: var(--divine-white);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Cosmic Background */
+.cosmic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(ellipse at center, #1a0033 0%, #0a0a0f 100%);
+}
+
+#starfield {
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+/* Portal Container */
+.portal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Portal Header */
+.portal-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: fadeInDown 1s ease-out;
+}
+
+.cosmic-title {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+}
+
+.glow-text {
+    text-shadow: 
+        0 0 10px var(--cosmic-purple),
+        0 0 20px var(--cosmic-purple),
+        0 0 30px var(--cosmic-blue),
+        0 0 40px var(--cosmic-blue);
+    animation: textGlow 3s ease-in-out infinite;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--cosmic-teal);
+    letter-spacing: 1px;
+}
+
+/* Central Portal Visualization */
+.central-portal {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 3rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.portal-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+    animation: portalRotate 10s linear infinite;
+}
+
+.outer-ring {
+    width: 300px;
+    height: 300px;
+    border-color: var(--cosmic-purple);
+    opacity: 0.6;
+    animation-duration: 15s;
+}
+
+.middle-ring {
+    width: 200px;
+    height: 200px;
+    border-color: var(--cosmic-blue);
+    opacity: 0.8;
+    animation-duration: 10s;
+    animation-direction: reverse;
+}
+
+.inner-ring {
+    width: 100px;
+    height: 100px;
+    border-color: var(--cosmic-gold);
+    animation-duration: 5s;
+}
+
+.portal-core {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, var(--cosmic-purple) 0%, var(--cosmic-blue) 50%, transparent 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 0 30px var(--portal-glow),
+        inset 0 0 20px var(--portal-glow);
+    animation: corePulse 2s ease-in-out infinite;
+}
+
+.core-energy {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, var(--cosmic-gold) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: energyPulse 1.5s ease-in-out infinite;
+}
+
+.portal-status {
+    position: absolute;
+    bottom: -2rem;
+    font-size: 0.8rem;
+    color: var(--sacred-green);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Dimensional Nav Pillars */
+.dimensional-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 4rem 0;
+}
+
+.nav-pillar {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-pillar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.nav-pillar:hover::before {
+    left: 100%;
+}
+
+.nav-pillar:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.past-pillar {
+    border-color: var(--past-glow);
+}
+
+.past-pillar:hover {
+    box-shadow: 0 10px 30px var(--past-glow);
+}
+
+.present-pillar {
+    border-color: var(--present-glow);
+}
+
+.present-pillar:hover {
+    box-shadow: 0 10px 30px var(--present-glow);
+}
+
+.future-pillar {
+    border-color: var(--future-glow);
+}
+
+.future-pillar:hover {
+    box-shadow: 0 10px 30px var(--future-glow);
+}
+
+.pillar-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+}
+
+.pillar-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.past-pillar .icon-base { stroke: var(--cosmic-gold); }
+.present-pillar .icon-base { stroke: var(--sacred-green); }
+.future-pillar .icon-base { stroke: var(--cosmic-violet); }
+
+.past-pillar .icon-detail { stroke: var(--cosmic-gold); }
+.present-pillar .icon-detail { stroke: var(--sacred-green); }
+.future-pillar .icon-detail { stroke: var(--cosmic-violet); }
+.future-pillar .icon-accent { fill: var(--cosmic-violet); }
+
+.pillar-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.pillar-desc {
+    text-align: center;
+    color: var(--cosmic-teal);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.pillar-frequency,
+.pillar-geometry {
+    text-align: center;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    padding: 0.3rem;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pillar-frequency {
+    color: var(--cosmic-gold);
+}
+
+.pillar-geometry {
+    color: var(--cosmic-blue);
+}
+
+.pillar-experiences {
+    list-style: none;
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+}
+
+.pillar-experiences li {
+    padding: 0.5rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.pillar-experiences li::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    color: var(--cosmic-teal);
+}
+
+.activate-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, var(--cosmic-purple), var(--cosmic-blue));
+    color: var(--divine-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.activate-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px var(--portal-glow);
+}
+
+/* AR Visualization Layer */
+.ar-layer {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 2px solid var(--cosmic-blue);
+}
+
+.ar-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.ar-btn {
+    padding: 0.8rem 1.5rem;
+    background: rgba(0, 206, 209, 0.2);
+    color: var(--cosmic-teal);
+    border: 2px solid var(--cosmic-teal);
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ar-btn:hover {
+    background: var(--cosmic-teal);
+    color: var(--space-black);
+    transform: translateY(-2px);
+}
+
+.ar-icon,
+.sync-icon {
+    font-size: 1.2rem;
+}
+
+.ar-canvas {
+    width: 100%;
+    height: 300px;
+    background: rgba(10, 10, 15, 0.8);
+    border-radius: 10px;
+    display: block;
+    margin: 1rem 0;
+}
+
+.dimension-info {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+.dimension-info h4 {
+    color: var(--cosmic-gold);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.info-content {
+    text-align: center;
+}
+
+.dimension-name {
+    font-size: 1.5rem;
+    color: var(--cosmic-teal);
+    margin-bottom: 0.5rem;
+}
+
+.dimension-frequency {
+    color: var(--cosmic-gold);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.dimension-status {
+    color: var(--sacred-green);
+    font-style: italic;
+}
+
+/* Cultural Elements */
+.cultural-elements {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 2px solid var(--cosmic-gold);
+}
+
+.cultural-elements h3 {
+    text-align: center;
+    color: var(--cosmic-gold);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.element-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.element-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.element-card:hover {
+    transform: scale(1.1);
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 5px 20px var(--past-glow);
+}
+
+.element-symbol {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.element-name {
+    font-size: 0.9rem;
+    color: var(--cosmic-teal);
+}
+
+/* Interaction Log */
+.interaction-log {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border-left: 4px solid var(--cosmic-purple);
+}
+
+.interaction-log h4 {
+    color: var(--cosmic-purple);
+    margin-bottom: 1rem;
+}
+
+.log-entries {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    color: var(--cosmic-teal);
+    border-left: 2px solid var(--sacred-green);
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Portal Modal */
+.portal-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.portal-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(106, 13, 173, 0.9), rgba(0, 206, 209, 0.9));
+    padding: 2rem;
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 0 50px var(--portal-glow);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--divine-white);
+    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(90deg);
+}
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.modal-body {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.modal-visualization {
+    margin-top: 1rem;
+}
+
+#modalCanvas {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+    background: rgba(10, 10, 15, 0.8);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes textGlow {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px var(--cosmic-purple),
+            0 0 20px var(--cosmic-purple),
+            0 0 30px var(--cosmic-blue);
+    }
+    50% {
+        text-shadow: 
+            0 0 20px var(--cosmic-purple),
+            0 0 40px var(--cosmic-purple),
+            0 0 60px var(--cosmic-blue),
+            0 0 80px var(--cosmic-blue);
+    }
+}
+
+@keyframes portalRotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes corePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 30px var(--portal-glow);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 50px var(--portal-glow);
+    }
+}
+
+@keyframes energyPulse {
+    0%, 100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cosmic-title {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .central-portal {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .outer-ring {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .middle-ring {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .inner-ring {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .dimensional-nav {
+        grid-template-columns: 1fr;
+    }
+    
+    .ar-controls {
+        flex-direction: column;
+    }
+    
+    .element-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Accessibility */
+.nav-pillar:focus {
+    outline: 2px solid var(--cosmic-teal);
+    outline-offset: 4px;
+}
+
+button:focus {
+    outline: 2px solid var(--cosmic-gold);
+    outline-offset: 2px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cosmic-purple);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cosmic-blue);
+}
