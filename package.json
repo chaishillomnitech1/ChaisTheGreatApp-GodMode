@@ -1,0 +1,53 @@
+{
+  "name": "chaisthegreatapp-godmode",
+  "version": "2.0.0",
+  "description": "The Omnipotent Command Center for transcending dimensions through music, NFTs, and cosmic energy",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:all",
+    "build:all": "npm run build:dna-resonance && npm run build:sacred-sigils && npm run build:ar-shrines && npm run build:vr-avatar && npm run build:scroll-music",
+    "build:dna-resonance": "echo 'Building DNA Resonance Beams...'",
+    "build:sacred-sigils": "echo 'Building Sacred Sigils...'",
+    "build:ar-shrines": "echo 'Building AR Shrines...'",
+    "build:vr-avatar": "echo 'Building VR Avatar...'",
+    "build:scroll-music": "echo 'Building ScrollMusic...'",
+    "compile:contracts": "npx hardhat compile",
+    "deploy:testnet": "npx hardhat run scripts/deploy.js --network mumbai",
+    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network polygon",
+    "verify:contracts": "npm run verify:sacred-sigil && npm run verify:scroll-music",
+    "verify:sacred-sigil": "npx hardhat verify --network polygon $SACRED_SIGIL_CONTRACT_ADDRESS",
+    "verify:scroll-music": "npx hardhat verify --network polygon $SCROLL_MUSIC_CONTRACT_ADDRESS"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaishillomnitech1/ChaisTheGreatApp-GodMode.git"
+  },
+  "keywords": [
+    "nft",
+    "blockchain",
+    "sacred-geometry",
+    "soul-altar",
+    "ar",
+    "vr",
+    "cosmic-alignment",
+    "scroll-verse",
+    "dna-resonance",
+    "bio-intelligence"
+  ],
+  "author": "ChaisTheGreat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chaishillomnitech1/ChaisTheGreatApp-GodMode/issues"
+  },
+  "homepage": "https://github.com/chaishillomnitech1/ChaisTheGreatApp-GodMode#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "ethers": "^6.9.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.0"
+  }
+}
