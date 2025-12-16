@@ -48,7 +48,12 @@ class DNAResonanceBeam {
   
   calculateResonance(bioData) {
     // Heart rate variability, breath pattern, focus level
-    return (bioData.hrv * 0.4 + bioData.breath * 0.3 + bioData.focus * 0.3);
+    // Weights: HRV (40%), Breath (30%), Focus (30%)
+    // These weights can be configured based on user preferences
+    const HRV_WEIGHT = 0.4;
+    const BREATH_WEIGHT = 0.3;
+    const FOCUS_WEIGHT = 0.3;
+    return (bioData.hrv * HRV_WEIGHT + bioData.breath * BREATH_WEIGHT + bioData.focus * FOCUS_WEIGHT);
   }
   
   projectHologram() {

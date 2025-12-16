@@ -156,7 +156,9 @@ contract SacredSigilNFT is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         require(interactionScore <= 100, "Score must be <= 100");
         
         uint256 oldScore = _sigilAttributes[tokenId].resonanceScore;
-        uint256 newScore = (oldScore + interactionScore) / 2; // Moving average
+        // Simple moving average: gives equal weight to old and new scores
+        // Alternative: weighted average like (oldScore * 0.7 + interactionScore * 0.3)
+        uint256 newScore = (oldScore + interactionScore) / 2;
         
         _sigilAttributes[tokenId].resonanceScore = newScore;
         
@@ -822,6 +824,11 @@ class FrequencyAnalyzer {
   }
   
   findDominantFrequency(data) {
+    // Handle edge case: empty or invalid data
+    if (!data || data.length === 0) {
+      return 0;
+    }
+    
     let maxValue = 0;
     let maxIndex = 0;
     
@@ -830,6 +837,11 @@ class FrequencyAnalyzer {
         maxValue = data[i];
         maxIndex = i;
       }
+    }
+    
+    // Ensure maxIndex is within valid range
+    if (maxIndex >= data.length) {
+      maxIndex = data.length - 1;
     }
     
     const nyquist = this.audioContext.sampleRate / 2;

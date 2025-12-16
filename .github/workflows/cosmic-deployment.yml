@@ -62,8 +62,11 @@ jobs:
           CURRENT_HOUR=$(date +%H)
           
           # Calculate basic alignment score (0-100)
-          # In production, this would integrate with astronomical APIs
-          ALIGNMENT_SCORE=85
+          # TODO: Replace with actual astronomical API integration (e.g., NASA, AstroAPI)
+          # For testing, using a baseline score that varies by hour
+          BASE_SCORE=75
+          HOUR_BONUS=$((CURRENT_HOUR % 10))
+          ALIGNMENT_SCORE=$((BASE_SCORE + HOUR_BONUS))
           
           # Check if deployment is during favorable cosmic hours (3am, 7am, 11am, 3pm, 7pm, 11pm)
           if [[ "$CURRENT_HOUR" =~ ^(03|07|11|15|19|23)$ ]]; then
