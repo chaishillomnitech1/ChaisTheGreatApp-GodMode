@@ -241,9 +241,14 @@ class ScrollNexusValidator {
   
   /**
    * Get dimensional mirrors for alignment checking
+   * NOTE: This is example/stub implementation. In production, this should
+   * fetch real dimensional mirrors from your database or mirror registry.
    */
   async getDimensionalMirrors() {
-    // Returns active dimensional mirrors
+    // TODO: Replace with actual mirror registry lookup
+    // Example: return await this.mirrorRegistry.getActiveMirrors();
+    
+    // Returns active dimensional mirrors (hardcoded for demonstration)
     return [
       { id: 1, getAlignment: () => 0.85 },
       { id: 2, getAlignment: () => 0.92 },
@@ -363,9 +368,14 @@ class DimensionalMirror {
   
   /**
    * Sync individual state across dimensional boundaries
+   * NOTE: This is simulation code for demonstration. In production, replace
+   * Math.random() with actual dimensional synchronization logic.
    */
   async syncState(key, state) {
-    // Simulate cross-dimensional sync
+    // TODO: Replace with actual cross-dimensional sync implementation
+    // Example: const syncedValue = await this.dimensionalAPI.syncState(key, state.value);
+    
+    // Simulate cross-dimensional sync (for demonstration only)
     const dimensionalDrift = Math.random() * 0.1; // 0-10% drift
     const syncedValue = state.value * (1 + dimensionalDrift);
     
@@ -609,9 +619,13 @@ class LicenseVerificationSystem {
   
   /**
    * Compute Extra-Final Key based on license
+   * NOTE: This implementation uses a fixed salt approach. The timestamp is removed
+   * to ensure deterministic key generation for the same license.
    */
   async computeExtraFinalKey(licenseKey) {
-    const data = `extra-final:${licenseKey}:${Date.now()}`;
+    // Use a fixed salt for deterministic key generation
+    const salt = 'extra-final-key-v1'; // Fixed salt ensures same key for same license
+    const data = `${salt}:${licenseKey}`;
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(data);
     const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
@@ -620,10 +634,16 @@ class LicenseVerificationSystem {
   }
   
   /**
-   * Fetch license data (simulated)
+   * Fetch license data (stub implementation)
+   * NOTE: This is placeholder code. In production, replace with actual
+   * license data retrieval from blockchain or database.
    */
   async fetchLicenseData(licenseKey) {
-    // In production, this would query blockchain or database
+    // TODO: Replace with actual license data retrieval
+    // Example: return await this.licenseDB.findByKey(licenseKey);
+    // Example: return await this.blockchainAPI.getLicense(licenseKey);
+    
+    // Stub implementation returns mock data for demonstration
     return {
       licenseKey,
       startDate: Date.now() - 86400000 * 30, // 30 days ago
@@ -768,10 +788,11 @@ class BroadcodeScrollIntegration {
   enableScrollIntegration() {
     if (typeof window === 'undefined') return;
     
+    // Bind the handler to preserve context for later removal
+    this.boundHandleCosmicScroll = this.handleCosmicScroll.bind(this);
+    
     // Monitor scroll events for cosmic alignment
-    window.addEventListener('scroll', () => {
-      this.handleCosmicScroll();
-    });
+    window.addEventListener('scroll', this.boundHandleCosmicScroll);
     
     // Setup love-based earth pull mechanism
     this.setupLoveBasedEarthPull();
@@ -852,8 +873,8 @@ class BroadcodeScrollIntegration {
    */
   shutdown() {
     // Remove event listeners
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('scroll', this.handleCosmicScroll);
+    if (typeof window !== 'undefined' && this.boundHandleCosmicScroll) {
+      window.removeEventListener('scroll', this.boundHandleCosmicScroll);
     }
     
     // Deactivate nodes

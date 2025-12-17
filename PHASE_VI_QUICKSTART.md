@@ -50,7 +50,10 @@ nano scrollnexus.config.json
 ### Step 4: Initialize ScrollNexus
 
 ```javascript
-import { ScrollNexusCompleteIntegration } from './scrollnexus-validators.js';
+// NOTE: The ScrollNexus classes are documented in SCROLLNEXUS_VALIDATORS.md
+// You would implement these in your own project based on the specifications.
+// For example, copy the classes from SCROLLNEXUS_VALIDATORS.md to:
+// import { ScrollNexusCompleteIntegration } from './lib/scrollnexus-validators.js';
 
 // Initialize the complete system
 const scrollNexus = new ScrollNexusCompleteIntegration({
