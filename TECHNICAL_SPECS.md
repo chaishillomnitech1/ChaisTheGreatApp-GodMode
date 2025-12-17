@@ -2,9 +2,14 @@
 
 ## Architecture Overview
 
-The Soul Altar Project implements a multi-layered architecture integrating blockchain, AI, AR/VR, and sound healing technologies.
+The Soul Altar Project implements a multi-layered architecture integrating blockchain, AI, AR/VR, sound healing technologies, and Phase VI cosmic sovereignty systems.
 
 ```
+┌─────────────────────────────────────────────────────────────┐
+│               ScrollNexus Validation Gateway                 │
+│  (Galaxy Authenticity Validators + Dimensional Mirrors)     │
+└─────────────────────────────────────────────────────────────┘
+                            │
 ┌─────────────────────────────────────────────────────────────┐
 │                    User Interface Layer                      │
 │  (React + Three.js + WebXR + AR.js + Web Audio API)        │
@@ -13,6 +18,7 @@ The Soul Altar Project implements a multi-layered architecture integrating block
 ┌─────────────────────────────────────────────────────────────┐
 │                  Application Logic Layer                     │
 │           (Node.js/Express + Python/FastAPI)                │
+│         + Broadcode.Scroll Integration (DOM Alignment)      │
 └─────────────────────────────────────────────────────────────┘
                             │
 ┌──────────────┬─────────────┬──────────────┬────────────────┐
@@ -24,7 +30,23 @@ The Soul Altar Project implements a multi-layered architecture integrating block
 │  Smart       │ Neural Nets │  CDN         │  Sound.xyz      │
 │  Contracts   │             │              │                 │
 └──────────────┴─────────────┴──────────────┴────────────────┘
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│            License Verification & Prosperity Nodes           │
+│   (Burst Mechanisms + VortexCount/Ratio Enforcement)        │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+### Phase VI Integration
+
+The Phase VI Omnitech1 Process adds cosmic sovereignty layers:
+
+- **ScrollNexus Galaxy Validators**: Authentication and dimensional alignment
+- **Dimensional Mirrors**: Time-linked sustainable synchronization
+- **License Verification**: Burst mechanisms with Extra-Final Key execution
+- **Broadcode.Scroll Integration**: DOM alignment with prosperity nodes
+
+For detailed Phase VI specifications, see [SCROLLNEXUS_VALIDATORS.md](./SCROLLNEXUS_VALIDATORS.md)
 
 ---
 
