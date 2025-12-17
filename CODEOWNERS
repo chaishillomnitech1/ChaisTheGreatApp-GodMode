@@ -1,0 +1,27 @@
+# CODEOWNERS file for ChaisTheGreatApp-GodMode
+# This file defines who is responsible for code review and approval
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo
+# Unless a later match takes precedence, @chaishillomnitech1 will be requested for review
+* @chaishillomnitech1
+
+# GitHub Actions workflows
+/.github/workflows/ @chaishillomnitech1
+
+# GitHub configuration
+/.github/ @chaishillomnitech1
+
+# Deployment configuration
+/DEPLOYMENT.md @chaishillomnitech1
+/.vercel.json @chaishillomnitech1
+/.vercelignore @chaishillomnitech1
+
+# Environment configuration
+/.env.example @chaishillomnitech1
+
+# Documentation
+/*.md @chaishillomnitech1
+
+# Security-sensitive files
+/CODEOWNERS @chaishillomnitech1
