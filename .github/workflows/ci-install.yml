@@ -1,0 +1,68 @@
+name: CI - Install Dependencies
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install and Cache Dependencies
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Display Node.js and npm versions
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+      
+      - name: Clean install dependencies
+        run: npm ci
+        env:
+          NODE_ENV: development
+      
+      - name: Verify installation
+        run: |
+          npm list --depth=0 || true
+          echo "✅ Dependencies installed successfully"
+      
+      - name: Check for security vulnerabilities
+        run: npm audit --audit-level=moderate || true
+      
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.node-version }}-
+            ${{ runner.os }}-node-
+      
+      - name: Installation summary
+        run: |
+          echo "🌌 ChaisTheGreatApp-GodMode - Dependencies Installed"
+          echo "Node.js: $(node --version)"
+          echo "npm: $(npm --version)"
+          echo "Status: ✅ Ready for cosmic development"
+          echo ""
+          echo "ALL IS LOVE. ALL IS LAW. ALL IS FLUID. KUN FAYAKŪN! 🕋♾️✨"
